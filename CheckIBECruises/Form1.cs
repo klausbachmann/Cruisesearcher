@@ -21,27 +21,27 @@ namespace CheckIBECruises
     public partial class Form1 : Form
     {
         IWebDriver driver;
+        String excelDatei;
         public Form1()
         {
             InitializeComponent();
 
         }
 
-
-
         public void setGrid(int nr, String URL, string status)
         {
             dataGridView1.BeginInvoke(new MethodInvoker(() => dataGridView1.Rows.Add(nr, URL, status)));
 
-            switch (status){
+            switch (status)
+            {
                 case "OK":
-                    dataGridView1.BeginInvoke(new MethodInvoker(()=> dataGridView1.Rows[dataGridView1.Rows.Count-2].Cells[2].Style.BackColor = Color.LightGreen));
+                    dataGridView1.BeginInvoke(new MethodInvoker(() => dataGridView1.Rows[dataGridView1.Rows.Count - 2].Cells[2].Style.BackColor = Color.LightGreen));
                     break;
                 case "ERROR":
-                    dataGridView1.BeginInvoke(new MethodInvoker(() => dataGridView1.Rows[dataGridView1.Rows.Count-2].Cells[2].Style.BackColor = Color.OrangeRed));
+                    dataGridView1.BeginInvoke(new MethodInvoker(() => dataGridView1.Rows[dataGridView1.Rows.Count - 2].Cells[2].Style.BackColor = Color.OrangeRed));
                     break;
             }
-           // dataGridView1.Rows.Add(nr, URL, status);
+            // dataGridView1.Rows.Add(nr, URL, status);
         }
         private void button1_Click(object sender, EventArgs e)
         {
@@ -49,21 +49,16 @@ namespace CheckIBECruises
             new Thread(() =>
             {
                 ExcelLoader loader = new ExcelLoader();
-                Excel.Workbook wb = loader.getWorkbook("C:/VSProjekte/CheckIBECruises/CheckIBECruises/Mappe1.xlsx");
+                Excel.Workbook wb = loader.getWorkbook(excelDatei);
 
                 Excel.Worksheet sheet = (Excel.Worksheet)wb.Worksheets.get_Item(1);
                 Excel.Range range = sheet.UsedRange;
 
-
                 Console.WriteLine(range.Rows.Count);
-                //for (int i = 2; i <= range.Rows.Count; i++)
-                for (int i = 2; i < 10; i++)
+                for (int i = 2; i <= range.Rows.Count; i++)
+                //for (int i = 2; i < 10; i++)
                 {
-
-
                     driver = new ChromeDriver(Directory.GetCurrentDirectory());
-
-
                     WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(20));
 
                     //Console.WriteLine( driver.Manage().Logs.GetLog("browser") );
@@ -97,16 +92,11 @@ namespace CheckIBECruises
 
         private void button2_Click(object sender, EventArgs e)
         {
-            //Thread thread = new Thread(delegate () { button1_Click(sender, e); });
-            //thread.Start();
-
-           // ParameterizedThreadStart start = new ParameterizedThreadStart(button1_Click(sender, e));
-
+            DialogResult result = openFileDialog1.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                excelDatei = openFileDialog1.FileName;
+            }
         }
-    }
-
-    public class ThreadClass
-    {
-        public void DoWork() { }
     }
 }
